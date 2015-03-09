@@ -87,7 +87,7 @@ loadData <- function() {
 	activityLabels  		<<- read.table(activities.path)
 
 	print("Data fully loaded!")
-	printStatus()
+	#printStatus()
 }
 
 cleanData <- function() {
@@ -119,7 +119,7 @@ cleanData <- function() {
 	testData[, activityCode := testActivityLabels]
 	trainingData[, activityCode := trainingActivityLabels]
 
-	printStatus()
+	#printStatus()
 
 	# extract only the measurements related to means and standard deviations
 	selectedFeatures <- grep("[Mm]ean|std|subject|activityCode", names(testData), ignore.case = TRUE)
@@ -142,9 +142,10 @@ mergeData <- function() {
 	# merge training and test data
 	setkey(trainingData, subject)
 	setkey(testData, subject)
-	#fullData <<- merge(trainingData, testData, by = c("subject", "activityCode"), all = TRUE)
+
 	commonColumns <- intersect(names(trainingData), names(testData))
 	fullData <<- merge(trainingData, testData, by = commonColumns, all = TRUE)
+
 	print(paste("Merge complete! The full data set has", nrow(fullData), "observations", sep = " "))
 }
 
@@ -159,7 +160,18 @@ addActivityLabels <- function() {
 }
 
 writeData <- function() {
+
 	print("Writing data...")
+
+	output <- fullData[,lapply(.SD, mean), by = c("activityLabel", "subject")]
+
+	write.table(output, file = "./data/output.csv",
+		row.names = FALSE,
+		col.names = TRUE,
+		sep = ",",
+		quote = FALSE)
+
+	print("Data is written!")
 }
 
 # Download and load data
