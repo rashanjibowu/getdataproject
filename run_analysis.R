@@ -211,7 +211,7 @@ writeData <- function() {
 	print("Data is written!")
 }
 
-# Full programe
+# Full program
 run_analysis <- function() {
 
 	downloadData()
