@@ -29,4 +29,4 @@ separately.*
 `writeData()` writes the cleaned, merged dataset to a common-separated file nameed output.txt with column names and without row names.
 
 #### Check out the code book
-For more detail on the underlying data, check out the [codebook]("CodeBook.md")
+For more detail on the underlying data, check out the [codebook](CodeBook.md)
