@@ -49,6 +49,7 @@ downloadData <- function() {
 	print("Data is downloaded and unzipped!")
 }
 
+# Loads data into memory
 loadData <- function() {
 
 	# path variables
@@ -90,6 +91,7 @@ loadData <- function() {
 	#printStatus()
 }
 
+# cleans data
 cleanData <- function() {
 
 	print("Cleaning Data ...")
@@ -159,13 +161,48 @@ addActivityLabels <- function() {
 	fullData[, activityLabel := activityLabels[fullData$activityCode, 2]]
 }
 
+# Clean variable names
+cleanVariableNames <- function() {
+
+    print("Cleaning variable names ...")
+
+    # remove dashes
+    setnames(fullData, names(fullData), gsub("-", "", names(fullData)))
+
+    # Capitalize "mean"
+    setnames(fullData, names(fullData), sub("mean", "Mean", names(fullData)))
+
+    # Capitalize "std"
+    setnames(fullData, names(fullData), sub("std", "STD", names(fullData)))
+
+    # Remove parentheses
+    setnames(fullData, names(fullData), sub("\\()", "", names(fullData)))
+
+    # Remove extra parentheses and commas
+    setnames(fullData, names(fullData), gsub("\\(|,|)", "", names(fullData)))
+
+    # Capitalize "gravity"
+    setnames(fullData, names(fullData), sub("gravity", "Gravity", names(fullData)))
+
+    # Remove activity code column as duplicate of activity column
+    fullData$activityCode <<- NULL
+
+    write.table(names(fullData),
+                file = "./data/variableNames.txt",
+                row.names = FALSE,
+                quote = FALSE,
+                sep = ",")
+
+    print("Variable names written to ./data/variableNames.txt")
+}
+
 writeData <- function() {
 
 	print("Writing data...")
 
 	output <- fullData[,lapply(.SD, mean), by = c("activityLabel", "subject")]
 
-	write.table(output, file = "./data/output.csv",
+	write.table(output, file = "./data/output.txt",
 		row.names = FALSE,
 		col.names = TRUE,
 		sep = ",",
@@ -174,7 +211,7 @@ writeData <- function() {
 	print("Data is written!")
 }
 
-# Download and load data
+# Full programe
 run_analysis <- function() {
 
 	downloadData()
@@ -186,6 +223,8 @@ run_analysis <- function() {
 	mergeData()
 
 	addActivityLabels()
+
+    cleanVariableNames()
 
 	# create tidy dataset with average of each variable for each activity and subject
 	writeData()
