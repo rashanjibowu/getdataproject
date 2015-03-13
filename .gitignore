@@ -1,3 +1,7 @@
+# System files
+.RData
+.Rhistory
+
 # data directory - the script will create the necessary directory,
 # download the files into that directory, and unzip them
 data/
